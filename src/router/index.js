@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import Dashboard from '../views/Dashboard.vue'
 import DataVisual from '../views/DataVisual.vue'
 
 const routes = [
@@ -9,16 +7,7 @@ const routes = [
     name: 'home',
     component: DataVisual
   },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: Dashboard
-  },
-  {
-    path: '/datavisual',
-    name: 'datavisual',
-    component: DataVisual
-  },
+
   // 可以在这里添加更多路由
   {
     path: '/:pathMatch(.*)*',
