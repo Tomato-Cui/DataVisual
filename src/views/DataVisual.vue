@@ -37,33 +37,33 @@
           <!-- 合同签订 -->
           <div class="bg-[#1d2b53]/40 p-2 sm:p-3 md:p-4 xl:p-5 rounded-lg border border-[#1d2b53]">
             <div class="flex items-center gap-2 mb-2 sm:mb-3">
-              <div class="w-1 h-3 sm:h-4 bg-blue-500"></div>
-              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white">合同签订</h2>
+              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white title-with-icon">合同签订</h2>
             </div>
             <div class="flex justify-between mb-2 sm:mb-3">
               <div>
                 <div class="text-gray-400 text-xs sm:text-sm mb-1">已签数量</div>
-                <div class="text-lg sm:text-xl md:text-2xl font-bold text-blue-400">5800个</div>
+                <div class="text-lg sm:text-xl md:text-2xl font-bold text-blue-400">{{ dashboardData.contract.signed }}个</div>
               </div>
               <div>
                 <div class="text-gray-400 text-xs sm:text-sm mb-1">未签数量</div>
-                <div class="text-lg sm:text-xl md:text-2xl font-bold text-orange-400">88个</div>
+                <div class="text-lg sm:text-xl md:text-2xl font-bold text-orange-400">{{ dashboardData.contract.unsigned }}个</div>
               </div>
             </div>
             <div class="relative h-1.5 sm:h-2 bg-[#1d2b53] rounded-full overflow-hidden">
-              <div class="absolute left-0 top-0 h-full bg-gradient-to-r from-blue-500 to-blue-400" style="width: 60%"></div>
+              <div class="absolute left-0 top-0 h-full bg-gradient-to-r from-blue-500 to-blue-400" 
+                :style="{ width: dashboardData.contract.percentage + '%' }">
+              </div>
             </div>
             <div class="flex justify-between mt-1 text-xs sm:text-sm text-gray-400">
-              <div>已签 60%</div>
-              <div>未签 40%</div>
+              <div>已签 {{ dashboardData.contract.percentage }}%</div>
+              <div>未签 {{ 100 - dashboardData.contract.percentage }}%</div>
             </div>
           </div>
 
           <!-- 合同数量趋势 -->
           <div class="bg-[#1d2b53]/40 p-2 sm:p-3 md:p-4 xl:p-5 rounded-lg border border-[#1d2b53] h-[calc(30vh-2rem)]">
             <div class="flex items-center gap-2 mb-2 sm:mb-3">
-              <div class="w-1 h-3 sm:h-4 bg-blue-500"></div>
-              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white">合同数量趋势</h2>
+              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white title-with-icon">合同数量趋势</h2>
             </div>
             <div ref="contractTrendChart" class="w-full h-[calc(100%-2rem)]"></div>
           </div>
@@ -71,44 +71,36 @@
           <!-- 合作区域分布 -->
           <div class="bg-[#1d2b53]/40 p-2 sm:p-3 md:p-4 xl:p-5 rounded-lg border border-[#1d2b53] h-[calc(30vh-2rem)]">
             <div class="flex items-center gap-2 mb-2 sm:mb-3">
-              <div class="w-1 h-3 sm:h-4 bg-blue-500"></div>
-              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white">合作区域分布</h2>
+              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white title-with-icon">合作区域分布</h2>
             </div>
             <div ref="regionChart" class="w-full h-[calc(100%-2rem)]"></div>
           </div>
         </div>
 
         <!-- 中间区域 -->
-        <div class="col-span-6 flex flex-col space-y-2 sm:space-y-3 md:space-y-4 xl:space-y-6 border border-[green] relative -top-4">
+        <div class="col-span-6 flex flex-col space-y-2 sm:space-y-3 md:space-y-4 xl:space-y-6 relative -top-4">
           <!-- 地图区域 -->
           <div class="flex-1 bg-[#1d2b53]/40 rounded-lg border border-[#1d2b53] relative overflow-hidden">
+            <!-- Canvas 特效层 -->
+            <canvas ref="particleCanvas" class="absolute inset-0 w-full h-full z-20"></canvas>
+            
             <!-- 背景光效 -->
-            <div class="absolute inset-0 bg-grid"></div>
-            <div class="absolute inset-0 bg-dots"></div>
+            <div class="absolute inset-0 bg-grid z-10"></div>
+            <div class="absolute inset-0 bg-dots z-10"></div>
             
             <!-- 地图容器 -->
-            <div ref="chinaMapChart" class="w-full h-full relative z-10"></div>
-            
-            <!-- 粒子效果 -->
-            <div id="particles-js" class="absolute inset-0 pointer-events-none"></div>
+            <div ref="chinaMapChart" class="w-full h-full relative z-30"></div>
             
             <!-- 扫描线效果 -->
-            <div class="absolute inset-0 scan-line"></div>
+            <div class="absolute inset-0 scan-line z-15"></div>
             
             <!-- 地图底座 -->
-            <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full">
+            <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full z-25">
               <!-- 光环组 -->
               <div class="absolute bottom-[-20%] left-1/2 transform -translate-x-1/2 w-[140%] aspect-[4/1]">
                 <div class="absolute inset-0 tech-circle"></div>
                 <div class="absolute inset-[10%] tech-circle" style="animation-delay: -2s"></div>
                 <div class="absolute inset-[20%] tech-circle" style="animation-delay: -4s"></div>
-              </div>
-              
-              <!-- 发光线条 -->
-              <div class="absolute bottom-0 left-0 w-full flex justify-between">
-                <div class="tech-line"></div>
-                <div class="tech-line" style="animation-delay: -1s"></div>
-                <div class="tech-line" style="animation-delay: -2s"></div>
               </div>
             </div>
 
@@ -119,7 +111,7 @@
             <div class="absolute bottom-0 right-0 w-20 h-20 corner-decoration rotate-180"></div>
           </div>
           <!-- 数据统计卡片 -->
-          <div class="grid grid-cols-6 gap-4 border border-[blue] mt-auto">
+          <div class="grid grid-cols-6 gap-4  mt-auto">
             <div v-for="(item, index) in statisticsData" :key="index"
               class="relative group">
                 <!-- 标题 -->
@@ -147,8 +139,7 @@
           <!-- 报告勘误 -->
           <div class="bg-[#1d2b53]/40 p-2 sm:p-3 md:p-4 xl:p-5 rounded-lg border border-[#1d2b53] h-[calc(30vh-2rem)]">
             <div class="flex items-center gap-2 mb-2 sm:mb-3">
-              <div class="w-1 h-3 sm:h-4 bg-blue-500"></div>
-              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white">报告勘误</h2>
+              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white title-with-icon">报告勘误</h2>
             </div>
             <div class="relative">
               <div ref="reportCorrectionChart" class="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 xl:w-48 xl:h-48 mx-auto"></div>
@@ -162,8 +153,7 @@
           <!-- 报告进展 -->
           <div class="bg-[#1d2b53]/40 p-2 sm:p-3 md:p-4 xl:p-5 rounded-lg border border-[#1d2b53] h-[calc(30vh-2rem)]">
             <div class="flex items-center gap-2 mb-2 sm:mb-3">
-              <div class="w-1 h-3 sm:h-4 bg-blue-500"></div>
-              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white">报告进展</h2>
+              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white title-with-icon">报告进展</h2>
             </div>
             <div ref="reportProgressChart" class="w-full h-[calc(100%-2rem)]"></div>
           </div>
@@ -171,8 +161,7 @@
           <!-- 设备情况 -->
           <div class="bg-[#1d2b53]/40 p-2 sm:p-3 md:p-4 xl:p-5 rounded-lg border border-[#1d2b53]">
             <div class="flex items-center gap-2 mb-2 sm:mb-3">
-              <div class="w-1 h-3 sm:h-4 bg-blue-500"></div>
-              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white">设备情况</h2>
+              <h2 class="text-sm sm:text-base md:text-lg font-medium text-white title-with-icon">设备情况</h2>
             </div>
             <div class="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
               <div class="bg-[#2a3a6a] p-2 sm:p-3 md:p-4 rounded-lg">
@@ -194,7 +183,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import * as echarts from 'echarts';
 import backgroundImage from '@/assets/images/background.png';
 import axios from 'axios';
@@ -205,6 +194,7 @@ import icon4 from '../assets/images/icon4.png';
 import icon5 from '../assets/images/icon5.png';
 import icon6 from '../assets/images/icon6.png';
 import base from '../assets/images/base.png';
+import texticon from '../assets/images/texticon.png';
 
 // 图表实例
 const contractTrendChart = ref(null);
@@ -227,6 +217,166 @@ const statisticsData = ref([
 
 // 背景图片URL
 const backgroundImageUrl = ref('@background.png');
+
+// Canvas 相关变量
+const particleCanvas = ref(null);
+let ctx = null;
+let width = 0;
+let height = 0;
+let particles = [];
+const particleCount = 150;
+const particleSpeed = 0.8;
+const particleSize = 1.2;
+const maxDistance = 100;
+const lightningColor = "#4db3ff";
+let animationFrameId = null;
+
+// 粒子类
+class Particle {
+  constructor() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.color = lightningColor;
+    this.angle = Math.random() * 360;
+    this.speed = Math.random() * particleSpeed;
+    this.opacity = Math.random() * 0.3 + 0.2;
+  }
+
+  update() {
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
+
+    if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+    }
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, particleSize, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(77, 179, 255, ${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+// 创建粒子
+function createParticles() {
+  particles = [];
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+  }
+}
+
+// 绘制连接线
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < maxDistance) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(77, 179, 255, ${0.2 * (1 - distance / maxDistance)})`;
+        ctx.lineWidth = 0.3 * (1 - distance / maxDistance);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+// 动画循环
+function animate() {
+  ctx.clearRect(0, 0, width, height);
+
+  // 设置全局透明度
+  ctx.globalAlpha = 0.8;
+
+  for (const particle of particles) {
+    particle.update();
+    particle.draw();
+  }
+
+  drawConnections();
+  
+  // 存储动画帧ID以便清理
+  animationFrameId = requestAnimationFrame(animate);
+}
+
+// 鼠标交互
+function handleMouseMove(e) {
+  const rect = particleCanvas.value.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  for (const particle of particles) {
+    const dx = mouseX - particle.x;
+    const dy = mouseY - particle.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < maxDistance * 1.5) {
+      particle.angle = Math.atan2(dy, dx);
+      particle.speed = 2;
+      particle.opacity = 0.5;
+    } else {
+      particle.speed = Math.random() * particleSpeed;
+      particle.opacity = Math.random() * 0.3 + 0.2;
+    }
+  }
+}
+
+// 初始化 Canvas
+function initCanvas() {
+  if (!particleCanvas.value) return;
+  
+  ctx = particleCanvas.value.getContext('2d');
+  
+  // 获取实际显示大小
+  const rect = particleCanvas.value.getBoundingClientRect();
+  width = rect.width;
+  height = rect.height;
+  
+  // 设置 Canvas 分辨率
+  particleCanvas.value.width = width * window.devicePixelRatio;
+  particleCanvas.value.height = height * window.devicePixelRatio;
+  
+  // 缩放上下文以匹配设备像素比
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  
+  createParticles();
+  animate();
+  
+  particleCanvas.value.addEventListener('mousemove', handleMouseMove);
+}
+
+// 清理函数
+function cleanup() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+  if (particleCanvas.value) {
+    particleCanvas.value.removeEventListener('mousemove', handleMouseMove);
+  }
+}
+
+// 监听窗口大小变化
+function handleResize() {
+  if (!particleCanvas.value) return;
+  
+  const rect = particleCanvas.value.getBoundingClientRect();
+  width = rect.width;
+  height = rect.height;
+  
+  particleCanvas.value.width = width * window.devicePixelRatio;
+  particleCanvas.value.height = height * window.devicePixelRatio;
+  
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  
+  createParticles();
+}
 
 // 创建注册中国地图
 const registerMap = async () => {
@@ -265,6 +415,50 @@ const updateTime = () => {
   const seconds = String(now.getSeconds()).padStart(2, '0');
   currentTime.value = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
+
+// 数据状态管理
+const dashboardData = ref({
+  contract: {
+    signed: 5800,
+    unsigned: 88,
+    total: 5888,
+    percentage: 60
+  },
+  contractTrend: {
+    months: ['1月', '2月', '3月', '4月', '5月', '6月'],
+    counts: [30, 35, 32, 29, 30, 26],
+    rates: [30, 35.5, 33, 29.1, 29.1, 27.6]
+  },
+  regionDistribution: [
+    { value: 22, name: '四川省' },
+    { value: 22, name: '贵州省' },
+    { value: 22, name: '重庆市' },
+    { value: 22, name: '云南省' }
+  ],
+  statistics: {
+    contractCount: 5888,
+    delegationCount: 5888,
+    reportApprovalCount: 5666,
+    taskCompletionCount: 5800,
+    testDataCount: 128,
+    deviceCount: 358
+  },
+  reportCorrection: {
+    pending: 50,
+    completed: 50,
+    percentage: 50
+  },
+  reportProgress: {
+    stages: ['已复核', '已审核', '已提交', '待编制'],
+    counts: [1200, 600, 400, 300]
+  },
+  deviceStatus: {
+    total: 9999,
+    types: 9999,
+    monthlyNewDevices: 50,
+    monthlyNewTypes: 50
+  }
+});
 
 // 初始化图表
 const initCharts = async () => {
@@ -671,117 +865,31 @@ const initCharts = async () => {
   });
 };
 
-// 测试接口连接
-const testApi = async () => {
-  try {
-    const response = await axios.get('/api/messages');
-    console.log('API Response:', response.data);
-  } catch (error) {
-    console.error('API Error:', error);
-  }
-};
-
 onMounted(() => {
   updateTime();
   timeInterval = setInterval(updateTime, 1000);
   
-  // 修改粒子效果初始化
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
-  script.onload = () => {
-    window.particlesJS("particles-js", {
-      particles: {
-        number: { 
-          value: 100,
-          density: {
-            enable: true,
-            value_area: 1000
-          }
-        },
-        color: { value: "#4db3ff" },
-        shape: {
-          type: ["circle", "triangle"],
-          stroke: {
-            width: 0,
-            color: "#4db3ff"
-          }
-        },
-        opacity: {
-          value: 0.6,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 1,
-            opacity_min: 0.1,
-            sync: false
-          }
-        },
-        size: {
-          value: 3,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 2,
-            size_min: 0.1,
-            sync: false
-          }
-        },
-        line_linked: {
-          enable: true,
-          distance: 150,
-          color: "#4db3ff",
-          opacity: 0.3,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 1.5,
-          direction: "none",
-          random: true,
-          straight: false,
-          out_mode: "out",
-          bounce: false,
-          attract: {
-            enable: true,
-            rotateX: 600,
-            rotateY: 1200
-          }
-        }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: {
-            enable: true,
-            mode: "grab"
-          },
-          resize: true
-        },
-        modes: {
-          grab: {
-            distance: 140,
-            line_linked: {
-              opacity: 0.6
-            }
-          }
-        }
-      },
-      retina_detect: true
-    });
-  };
-  document.head.appendChild(script);
+  // 注释掉 API 调用相关代码
+  // fetchDashboardData();
+  // dataRefreshInterval = setInterval(fetchDashboardData, 5 * 60 * 1000);
+  
+  nextTick(() => {
+    initCanvas();
+    window.addEventListener('resize', handleResize);
+  });
 
-  // 等待DOM渲染完成后初始化图表
+  // 直接初始化图表
   setTimeout(() => {
     initCharts();
-    testApi();
   }, 0);
 });
 
 onUnmounted(() => {
   clearInterval(timeInterval);
-  // 销毁图表实例
+  // clearInterval(dataRefreshInterval); // 注释掉
   window.removeEventListener('resize', () => {});
+  cleanup();
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
@@ -867,24 +975,25 @@ onUnmounted(() => {
 
 /* 扫描线 */
 .scan-line {
+  opacity: 0.3;
   background: linear-gradient(to bottom,
     transparent 0%,
     rgba(77, 179, 255, 0.1) 48%,
-    rgba(77, 179, 255, 0.3) 50%,
+    rgba(77, 179, 255, 0.4) 50%,
     rgba(77, 179, 255, 0.1) 52%,
     transparent 100%);
   background-size: 100% 200%;
-  animation: scan 4s linear infinite;
+  animation: scan 6s linear infinite;
 }
 
 /* 科技感圆环 */
 .tech-circle {
-  border: 1px solid rgba(77, 179, 255, 0.3);
+  border: 1px solid rgba(77, 179, 255, 0.2);
   border-radius: 50%;
   box-shadow: 
-    inset 0 0 20px rgba(77, 179, 255, 0.2),
-    0 0 20px rgba(77, 179, 255, 0.2);
-  animation: pulse 6s ease-in-out infinite;
+    inset 0 0 30px rgba(77, 179, 255, 0.2),
+    0 0 30px rgba(77, 179, 255, 0.2);
+  animation: pulse 8s ease-in-out infinite;
 }
 
 /* 科技感线条 */
@@ -924,5 +1033,41 @@ onUnmounted(() => {
   0% { opacity: 0.3; height: 40px; }
   50% { opacity: 0.8; height: 60px; }
   100% { opacity: 0.3; height: 40px; }
+}
+
+canvas {
+  pointer-events: auto !important;
+  opacity: 0.8;
+  mix-blend-mode: screen;
+}
+
+/* 调整z-index层级 */
+.z-10 { z-index: 10; }
+.z-15 { z-index: 15; }
+.z-20 { z-index: 20; }
+.z-25 { z-index: 25; }
+.z-30 { z-index: 30; }
+
+/* 标题图标样式 */
+.title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.title-with-icon::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/images/texticon.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style> 
